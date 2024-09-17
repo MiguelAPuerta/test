@@ -15,27 +15,27 @@ Actores Principales
 
 El proyecto SITAS se divide en varios módulos, cada uno con su propia rama en el repositorio:
 
-1. **Autenticación y Autorización** (feature/auth)
+1. **Autenticación y Autorización** (`feature/auth`)
    - **Product Manager:** Profesora Katerine Marceles
    - Módulo encargado de gestionar el registro, autenticación y autorización de usuarios, asignando roles y permisos de acuerdo al perfil.
 
-2. **Gestión de Vuelos** (feature/flight-management)
+2. **Gestión de Vuelos** (`feature/flight-management`)
    - Product Manager: Catalina Céspedes
    - Gestión de aeronaves y vuelos de la aerolínea. Permite crear, editar, eliminar y consultar vuelos.
 
-3. **Búsqueda de Vuelos** (feature/flight-search)
+3. **Búsqueda de Vuelos** (`feature/flight-search`)
    - **Product Manager:** Profesor Diego Botia
    - Módulo clave que permite a los usuarios buscar y consultar vuelos disponibles, dirigiendo el proceso hacia la reserva.
 
-4. **Gestión de Reserva** (feature/booking-management)
+4. **Gestión de Reserva** (`feature/booking-management`)
    - **Product Manager:** Profesora Diana Margot López
    - Facilita la creación, modificación y cancelación de reservas, incluyendo la gestión de pasajeros, asientos y equipajes.
 
-5. **Gestión de Equipajes** (feature/baggage-management)
+5. **Gestión de Equipajes** (`feature/baggage-management`)
    - **Product Manager:** Wilmer Gil
    - Permite gestionar el equipaje asociado a una reserva, considerando dimensiones, peso y costos adicionales.
 
-6. **Pagos** (feature/payments)
+6. **Pagos** (`feature/payments`)
    - **Product Manager:** Profesor Robinson Coronado
    - Módulo encargado de procesar los pagos a través de varias pasarelas de pago (PSE, PayU, PayPal, etc.).
 
