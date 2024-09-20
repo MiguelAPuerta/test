@@ -1,8 +1,0 @@
-type Query {
-    helloWorld(name: String!): String!
-    byeWorld(name: String!): String!
-}
-
-type Mutation {
-    deleteWorld: Boolean!
-}
