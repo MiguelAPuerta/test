@@ -1,6 +1,7 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +17,19 @@ public class Airport {
 
     @ManyToOne()
     @JoinColumn(name = "iataCode", referencedColumnName = "iataCode")
+    @NotNull
     private City city;
 
     private String name;
 
     @OneToMany(mappedBy = "airport", cascade = CascadeType.ALL)
     private List<Scale> scales = new ArrayList<>();
+
+    @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL)
+    private List<Flight> origin = new ArrayList<>();
+
+    @OneToMany(mappedBy = "destination", cascade = CascadeType.ALL)
+    private List<Flight> destination = new ArrayList<>();
 
     public Airport() {
     }
@@ -61,6 +69,22 @@ public class Airport {
 
     public void setScales(List<Scale> scales) {
         this.scales = scales;
+    }
+
+    public List<Flight> getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(List<Flight> origin) {
+        this.origin = origin;
+    }
+
+    public List<Flight> getDestination() {
+        return destination;
+    }
+
+    public void setDestination(List<Flight> destination) {
+        this.destination = destination;
     }
 
     @Override

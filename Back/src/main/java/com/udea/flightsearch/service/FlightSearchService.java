@@ -1,7 +1,7 @@
 package com.udea.flightsearch.service;
 
 import com.udea.flightsearch.model.Flight;
-import com.udea.flightsearch.repository.FlightSearchRepository;
+import com.udea.flightsearch.repository.IFlightSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,12 +12,12 @@ import java.util.List;
 public class FlightSearchService {
 
     @Autowired
-    private FlightSearchRepository flightSearchRepository;
+    private IFlightSearchRepository IFlightSearchRepository;
 
-    public List<Flight> searchFlights(String origin, String destination, LocalDate departureTime, LocalDate arrivalTime) {
+    public List<Flight> searchFlights(String originName, String destinationName, LocalDate departureTime, LocalDate arrivalTime) {
 
-        String key = (origin != null ? "1" : "0") +
-                (destination != null ? "1" : "0") +
+        String key = (originName != null ? "1" : "0") +
+                (destinationName != null ? "1" : "0") +
                 (departureTime != null ? "1" : "0") +
                 (arrivalTime != null ? "1" : "0");
 
@@ -25,13 +25,13 @@ public class FlightSearchService {
         switch (key) {
 
             case "1100":
-                return flightSearchRepository.findByOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseOrderByDepartureTimeAsc(origin, destination);
+                return IFlightSearchRepository.findByOrigin_NameContainingIgnoreCaseAndDestination_NameContainingIgnoreCaseOrderByDepartureTimeAsc(originName, destinationName);
 
             case "1110":
-                return flightSearchRepository.findByOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndDepartureTimeGreaterThanEqualOrderByDepartureTimeAsc(origin, destination, departureTime);
+                return IFlightSearchRepository.findByOrigin_NameContainingIgnoreCaseAndDestination_NameContainingIgnoreCaseAndDepartureTimeGreaterThanEqualOrderByDepartureTimeAsc(originName, destinationName, departureTime);
 
             case "1111":
-                return flightSearchRepository.findByOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndDepartureTimeGreaterThanAndArrivalTimeLessThanOrderByDepartureTimeAsc(origin, destination, departureTime, arrivalTime);
+                return IFlightSearchRepository.findByOrigin_NameContainingIgnoreCaseAndDestination_NameContainingIgnoreCaseAndDepartureTimeGreaterThanAndArrivalTimeLessThanOrderByDepartureTimeAsc(originName, destinationName, departureTime, arrivalTime);
 
             default:
                 throw new IllegalArgumentException("No se encontró una combinación válida de parámetros.");

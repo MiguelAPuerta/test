@@ -1,6 +1,7 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
@@ -13,12 +14,15 @@ public class Seat {
 
     @ManyToOne()
     @JoinColumn(name = "planeTypeId", referencedColumnName = "planeTypeId")
+    @NotNull
     private PlaneType planeType;
 
+    @NotNull
     private String seatNumber;
 
     @ManyToOne()
     @JoinColumn(name = "seatClass", referencedColumnName = "classId")
+    @NotNull
     private SeatClass seatClass;
 
     public Seat() {

@@ -1,6 +1,7 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,15 +14,18 @@ public class PlaneType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long planeTypeId;
 
+    @NotNull
     private String model;
+    @NotNull
     private Long seatCapacity;
+    @NotNull
     private String seatDistribution;
 
     @OneToMany(mappedBy = "planeType", cascade = CascadeType.ALL)
-    private List<Seat> seats = new ArrayList<>();;
+    private List<Seat> seats = new ArrayList<>();
 
     @OneToMany(mappedBy = "planeType", cascade = CascadeType.ALL)
-    private List<Flight> flights = new ArrayList<>();;
+    private List<Flight> flights = new ArrayList<>();
 
     public PlaneType() {
     }

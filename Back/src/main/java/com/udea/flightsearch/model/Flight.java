@@ -1,6 +1,7 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,33 +13,50 @@ import java.util.Objects;
 public class Flight {
 
     @Id
+    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long flightId;
 
+    @NotNull
     private Long flightNumber;
-    private String origin;
-    private String destination;
 
+    @ManyToOne()
+    @JoinColumn(name = "origin", referencedColumnName = "airportId")
+    @NotNull
+    private Airport origin;
+
+    @ManyToOne()
+    @JoinColumn(name = "destination", referencedColumnName = "airportId")
+    @NotNull
+    private Airport destination;
+
+    @NotNull
     private LocalDate departureTime;
+    @NotNull
     private LocalDate arrivalTime;
 
     @ManyToOne()
     @JoinColumn(name = "planeType", referencedColumnName = "planeTypeId")
+    @NotNull
     private PlaneType planeType;
 
+    @NotNull
     private double price;
+    @NotNull
     private BigDecimal taxPercentage;
     private Integer surchargePercentage;
+    @NotNull
     private boolean isCanceled;
     private boolean hasScales;
 
     @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL)
-    private List<Scale> scales = new ArrayList<>();;
+    private List<Scale> scales = new ArrayList<>();
 
     public Flight() {
     }
 
-    public Flight(Long flightNumber, String origin, String destination, LocalDate departureTime, LocalDate arrivalTime, PlaneType planeType, double price, BigDecimal taxPercentage, Integer surchargePercentage, boolean isCanceled, boolean hasScales) {
+    public Flight(Long flightId, Long flightNumber, Airport origin, Airport destination, LocalDate departureTime, LocalDate arrivalTime, PlaneType planeType, double price, BigDecimal taxPercentage, Integer surchargePercentage, boolean isCanceled, boolean hasScales) {
+        this.flightId = flightId;
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
@@ -68,19 +86,19 @@ public class Flight {
         this.flightNumber = flightNumber;
     }
 
-    public String getOrigin() {
+    public Airport getOrigin() {
         return origin;
     }
 
-    public void setOrigin(String origin) {
+    public void setOrigin(Airport origin) {
         this.origin = origin;
     }
 
-    public String getDestination() {
+    public Airport getDestination() {
         return destination;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(Airport destination) {
         this.destination = destination;
     }
 

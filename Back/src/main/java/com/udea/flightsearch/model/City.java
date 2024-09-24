@@ -1,6 +1,7 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +13,12 @@ public class City {
     @Id
     private String iataCode;
 
+    @NotNull
     private String name;
     private String country;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
-    private List<Airport> airports = new ArrayList<>();;
+    private List<Airport> airports = new ArrayList<>();
 
     public City() {
     }

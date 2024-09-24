@@ -1,6 +1,7 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -12,17 +13,20 @@ public class Scale {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long scaleId;
 
-
     @ManyToOne()
     @JoinColumn(name = "flightId", referencedColumnName = "flightId")
+    @NotNull
     private Flight flight;
 
     @ManyToOne()
     @JoinColumn(name = "airportId", referencedColumnName = "airportId")
     private Airport airport;
 
+    @NotNull
     private Long position;
+    @NotNull
     private LocalDate departureTime;
+    @NotNull
     private LocalDate arrivalTime;
 
     public Scale() {

@@ -17,10 +17,10 @@ public class FlightSearchController {
     private FlightSearchService flightSearchService;
 
     @GetMapping("/search")
-    public List<Flight> searchFlights(@RequestParam(value = "origin", required = false) String origin,
-                                       @RequestParam(value = "destination", required = false) String destination,
+    public List<Flight> searchFlights(@RequestParam(value = "originName", required = false) String originName,
+                                       @RequestParam(value = "destinationName", required = false) String destinationName,
                                        @RequestParam(value = "startDate", required = false) LocalDate departureTime,
                                        @RequestParam(value = "endDate", required = false) LocalDate arrivalTime) {
-        return flightSearchService.searchFlights(origin, destination, departureTime, arrivalTime);
+        return flightSearchService.searchFlights(originName, destinationName, departureTime, arrivalTime);
     }
 }
