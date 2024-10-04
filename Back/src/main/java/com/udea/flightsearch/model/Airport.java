@@ -16,7 +16,7 @@ public class Airport {
     private Long airportId;
 
     @ManyToOne()
-    @JoinColumn(name = "iataCode", referencedColumnName = "iataCode")
+    @JoinColumn(name = "iataCode", referencedColumnName = "iataCode", nullable = false)
     @NotNull
     private City city;
 

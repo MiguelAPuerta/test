@@ -13,7 +13,6 @@ import java.util.Objects;
 public class Flight {
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long flightId;
 
@@ -21,13 +20,11 @@ public class Flight {
     private Long flightNumber;
 
     @ManyToOne()
-    @JoinColumn(name = "origin", referencedColumnName = "airportId")
-    @NotNull
+    @JoinColumn(name = "origin", referencedColumnName = "airportId", nullable = false)
     private Airport origin;
 
     @ManyToOne()
-    @JoinColumn(name = "destination", referencedColumnName = "airportId")
-    @NotNull
+    @JoinColumn(name = "destination", referencedColumnName = "airportId", nullable = false)
     private Airport destination;
 
     @NotNull
@@ -36,8 +33,7 @@ public class Flight {
     private LocalDate arrivalTime;
 
     @ManyToOne()
-    @JoinColumn(name = "planeType", referencedColumnName = "planeTypeId")
-    @NotNull
+    @JoinColumn(name = "planeType", referencedColumnName = "planeTypeId", nullable = false)
     private PlaneType planeType;
 
     @NotNull

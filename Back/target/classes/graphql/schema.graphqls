@@ -1,8 +1,101 @@
+# Consultas para obtener información
 type Query {
-    helloWorld(name: String!): String!
-    byeWorld(name: String!): String!
+    getAllFlights: [Flight!]!
+    getFlightById(id: ID!): Flight
+    searchFlights(
+        originName: String!,
+        destinationName: String!,
+        departureTime: String,
+        arrivalTime: String): [Flight]
 }
 
+# Mutaciones para crear, actualizar y eliminar
 type Mutation {
-    deleteWorld: Boolean!
+    createFlight(
+        flightNumber: Float!,
+        originId: Float!,
+        destinationId: Float!,
+        departureTime: String!,
+        arrivalTime: String!,
+        planeTypeId: Float!,
+        price: Float!,
+        taxPercentage: Float!,
+        surchargePercentage: Float!,
+        isCanceled: Boolean!,
+        hasScales: Boolean!
+    ): Flight
+
+    updateFlight(
+        id: ID!,
+        flightNumber: Float,
+        originId: Float,
+        destinationId: Float,
+        departureTime: String,
+        arrivalTime: String,
+        planeTypeId: Float,
+        price: Float,
+        taxPercentage: Float,
+        surchargePercentage: Float,
+        isCanceled: Boolean,
+        hasScales: Boolean
+    ): Flight!
+
+    deleteFlight(id: ID!): Boolean!
+}
+
+# Definición de tipos
+type Airport {
+    airportId: ID!
+    city: City!
+    name: String
+}
+
+type City {
+    iataCode: String!
+    name: String!
+    country: String
+}
+
+type Flight {
+    flightId: ID!
+    flightNumber: Float!
+    origin: Airport!
+    destination: Airport!
+    departureTime: String!
+    arrivalTime: String!
+    planeType: PlaneType!
+    price: Float!
+    taxPercentage: Float!
+    surchargePercentage: Float
+    isCanceled: Boolean!
+    hasScales: Boolean
+}
+
+type PlaneType {
+    planeTypeId: ID!
+    model: String!
+    seatCapacity: Float!
+    seatDistribution: String!
+}
+
+type Scale {
+    scaleId: ID!
+    flight: Flight!
+    airport: Airport!
+    position: Float!
+    departureTime: String!
+    arrivalTime: String!
+}
+
+type Seat {
+    seatId: ID!
+    planeType: PlaneType!
+    seatNumber: String!
+    seatClass: SeatClass!
+}
+
+type SeatClass {
+    classId: ID!
+    name: String
+    description: String
 }

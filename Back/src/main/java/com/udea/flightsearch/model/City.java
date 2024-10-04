@@ -11,6 +11,7 @@ import java.util.Objects;
 public class City {
 
     @Id
+    @NotNull
     private String iataCode;
 
     @NotNull
