@@ -1,5 +1,6 @@
 package com.udea.flightsearch.service;
 
+import com.udea.flightsearch.Specification.FlightSpecification;
 import com.udea.flightsearch.model.Flight;
 import com.udea.flightsearch.repository.IFlightSearchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,28 +16,19 @@ public class FlightSearchService {
     @Autowired
     private IFlightSearchRepository flightRepository;
 
-    public List<Flight> searchFlights(String originName, String destinationName, LocalDate departureTime, LocalDate arrivalTime) {
-
-        String key = (originName != null ? "1" : "0") +
-                (destinationName != null ? "1" : "0") +
-                (departureTime != null ? "1" : "0") +
-                (arrivalTime != null ? "1" : "0");
-
-        switch (key) {
-
-            case "1100":
-                return flightRepository.findByOrigin_City_NameContainingIgnoreCaseAndDestination_City_NameContainingIgnoreCaseOrderByDepartureTimeAsc(originName, destinationName);
-
-            case "1110":
-                return flightRepository.findByOrigin_City_NameContainingIgnoreCaseAndDestination_City_NameContainingIgnoreCaseAndDepartureTimeEquals(originName, destinationName, departureTime);
-
-            case "1111":
-                return flightRepository.findByOrigin_City_NameContainingIgnoreCaseAndDestination_City_NameContainingIgnoreCaseAndDepartureTimeEqualsAndArrivalTimeEquals(originName, destinationName, departureTime, arrivalTime);
-
-            default:
-                throw new IllegalArgumentException("No se encontró una combinación válida de parámetros.");
-        }
+    public List<Flight> searchFlights(String originName,
+                                      String destinationName,
+                                      LocalDate departureTime,
+                                      LocalDate arrivalTime,
+                                      boolean orderByDepartureTimeAsc,
+                                      boolean orderByPriceAsc
+    ) {
+        // Use the specification method to search flights
+        return flightRepository.findAll(
+                FlightSpecification.filterBy(originName, destinationName, departureTime, arrivalTime, orderByDepartureTimeAsc, orderByPriceAsc)
+        );
     }
+
 
     // Funcion para obtener todos los vuelos
     public List<Flight> getAllFlights() {

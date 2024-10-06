@@ -6,7 +6,9 @@ type Query {
         originName: String!,
         destinationName: String!,
         departureTime: String,
-        arrivalTime: String): [Flight]
+        arrivalTime: String,
+        orderByDepartureTimeAsc: Boolean,
+        orderByPriceAsc: Boolean): [Flight]
 }
 
 # Mutaciones para crear, actualizar y eliminar

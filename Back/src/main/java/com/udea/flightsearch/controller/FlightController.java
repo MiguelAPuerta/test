@@ -28,7 +28,19 @@ public class FlightController {
     }
 
     @QueryMapping
-    public List<Flight> searchFlights(@Argument String originName, @Argument String destinationName, @Argument LocalDate departureTime, @Argument LocalDate arrivalTime) {
-        return flightSearchService.searchFlights(originName, destinationName, departureTime, arrivalTime);
+    public List<Flight> searchFlights(
+            @Argument String originName,
+            @Argument String destinationName,
+            @Argument LocalDate departureTime,
+            @Argument LocalDate arrivalTime,
+            @Argument boolean orderByDepartureTimeAsc,
+            @Argument boolean orderByPriceAsc) {
+        return flightSearchService.searchFlights(
+                originName,
+                destinationName,
+                departureTime,
+                arrivalTime,
+                orderByDepartureTimeAsc,
+                orderByPriceAsc);
     }
 }
