@@ -22,7 +22,7 @@ public class Airport {
 
     private String name;
 
-    @OneToMany(mappedBy = "airport", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "stopoverAirport", cascade = CascadeType.ALL)
     private List<Scale> scales = new ArrayList<>();
 
     @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL)

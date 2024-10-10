@@ -1,14 +1,15 @@
 package com.udea.flightsearch.Specification;
 
+import jakarta.persistence.criteria.*;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.domain.Specification;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
 
 import com.udea.flightsearch.model.Flight;
 import com.udea.flightsearch.model.Airport;
 import com.udea.flightsearch.model.City;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +18,15 @@ public class FlightSpecification {
     public static Specification<Flight> filterBy(
             String originName,
             String destinationName,
-            LocalDate departureTime,
-            LocalDate arrivalTime,
-            boolean orderByDepartureTimeAsc,
+            LocalDate departureDate,
+            LocalDate arrivalDate,
+            Double minimumPrice,
+            Double maximumPrice,
+            LocalDate minimumDate,
+            LocalDate maximumDate,
+            LocalTime minimumTime,
+            LocalTime maximumTime,
+            boolean orderByDepartureDateAsc,
             boolean orderByPriceAsc
     ) {
         return (root, query, criteriaBuilder) -> {
@@ -41,18 +48,36 @@ public class FlightSpecification {
             }
 
             // Si el dia de salida es especificado, se agrega al query de busqueda
-            if (departureTime != null) {
-                predicates.add(criteriaBuilder.equal(root.get("departureTime"), departureTime));
+            if (departureDate != null) {
+                predicates.add(criteriaBuilder.equal(root.get("departureDate"), departureDate));
             }
 
             // Si el dia de llegada es especificado, se agrega al query de busqueda
-            if (arrivalTime != null) {
-                predicates.add(criteriaBuilder.equal(root.get("arrivalTime"), arrivalTime));
+            if (arrivalDate != null) {
+                predicates.add(criteriaBuilder.equal(root.get("arrivalDate"), arrivalDate));
             }
 
+            // Filtra la busqueda entre un rango de precios
+            if (minimumPrice != null && maximumPrice != null) {
+                predicates.add(criteriaBuilder.between(root.get("price"), minimumPrice, maximumPrice));
+            }
+
+            // Filtra la busqueda entre un rango de Fechas
+            if (minimumDate != null && maximumDate != null) {
+                predicates.add(criteriaBuilder.between(root.get("departureDate"), minimumDate, maximumDate));
+            }
+
+            // Filtra la busqueda entre un rango de horarios de salida
+            if (minimumTime != null && maximumTime != null) {
+                predicates.add(criteriaBuilder.between(root.get("departureTime"), minimumTime, maximumTime));
+            }
+
+            //retorna solo vuelos que no estan cancelados
+            predicates.add(criteriaBuilder.equal(root.get("isCanceled"), false));
+
             // Realiza ordenamiento, ya sea por dia de salida o por precio, este se realiza de manera ascendente
-            if (orderByDepartureTimeAsc) {
-                query.orderBy(criteriaBuilder.asc(root.get("departureTime")));
+            if (orderByDepartureDateAsc) {
+                query.orderBy(criteriaBuilder.asc(root.get("departureDate")), criteriaBuilder.asc(root.get("departureTime")));
             } else if (orderByPriceAsc) {
                 query.orderBy(criteriaBuilder.asc(root.get("price")));
             }

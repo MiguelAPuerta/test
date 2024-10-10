@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,9 +29,13 @@ public class Flight {
     private Airport destination;
 
     @NotNull
-    private LocalDate departureTime;
+    private LocalDate departureDate;
     @NotNull
-    private LocalDate arrivalTime;
+    private LocalDate arrivalDate;
+    @NotNull
+    private LocalTime departureTime;
+    @NotNull
+    private LocalTime arrivalTime;
 
     @ManyToOne()
     @JoinColumn(name = "planeType", referencedColumnName = "planeTypeId", nullable = false)
@@ -43,19 +48,23 @@ public class Flight {
     private Integer surchargePercentage;
     @NotNull
     private boolean isCanceled;
-    private boolean hasScales;
 
-    @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL)
-    private List<Scale> scales = new ArrayList<>();
+    @OneToMany(mappedBy = "primaryFlight", cascade = CascadeType.ALL)
+    private List<Scale> primaryFlights = new ArrayList<>();
+
+    @OneToMany(mappedBy = "connectingFlight", cascade = CascadeType.ALL)
+    private List<Scale> connectingFlight = new ArrayList<>();
 
     public Flight() {
     }
 
-    public Flight(Long flightId, Long flightNumber, Airport origin, Airport destination, LocalDate departureTime, LocalDate arrivalTime, PlaneType planeType, double price, BigDecimal taxPercentage, Integer surchargePercentage, boolean isCanceled, boolean hasScales) {
+    public Flight(Long flightId, Long flightNumber, Airport origin, Airport destination, LocalDate departureDate, LocalDate arrivalDate, LocalTime departureTime, LocalTime arrivalTime, PlaneType planeType, double price, BigDecimal taxPercentage, Integer surchargePercentage, boolean isCanceled, boolean hasScales) {
         this.flightId = flightId;
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
+        this.departureDate = departureDate;
+        this.arrivalDate = arrivalDate;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
         this.planeType = planeType;
@@ -63,7 +72,6 @@ public class Flight {
         this.taxPercentage = taxPercentage;
         this.surchargePercentage = surchargePercentage;
         this.isCanceled = isCanceled;
-        this.hasScales = hasScales;
     }
 
     public Long getFlightId() {
@@ -98,19 +106,35 @@ public class Flight {
         this.destination = destination;
     }
 
-    public LocalDate getDepartureTime() {
+    public LocalDate getDepartureDate() {
+        return departureDate;
+    }
+
+    public void setDepartureDate(LocalDate departureDate) {
+        this.departureDate = departureDate;
+    }
+
+    public LocalDate getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(LocalDate arrivalDate) {
+        this.arrivalDate = arrivalDate;
+    }
+
+    public @NotNull LocalTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(LocalDate departureTime) {
+    public void setDepartureTime(@NotNull LocalTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public LocalDate getArrivalTime() {
+    public @NotNull LocalTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(LocalDate arrivalTime) {
+    public void setArrivalTime(@NotNull LocalTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
@@ -154,20 +178,20 @@ public class Flight {
         isCanceled = canceled;
     }
 
-    public boolean isHasScales() {
-        return hasScales;
+    public List<Scale> getPrimaryFlights() {
+        return primaryFlights;
     }
 
-    public void setHasScales(boolean hasScales) {
-        this.hasScales = hasScales;
+    public void setPrimaryFlights(List<Scale> primaryFlights) {
+        this.primaryFlights = primaryFlights;
     }
 
-    public List<Scale> getScales() {
-        return scales;
+    public List<Scale> getConnectingFlight() {
+        return connectingFlight;
     }
 
-    public void setScales(List<Scale> scales) {
-        this.scales = scales;
+    public void setConnectingFlight(List<Scale> connectingFlight) {
+        this.connectingFlight = connectingFlight;
     }
 
     //IDIOMS

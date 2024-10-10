@@ -5,8 +5,21 @@ type Query {
     searchFlights(
         originName: String!,
         destinationName: String!,
-        departureTime: String,
-        arrivalTime: String): [Flight]
+        departureDate: String,
+        arrivalDate: String,
+        minimumPrice: Float,
+        maximumPrice: Float,
+        minimumDate: String,
+        maximumDate: String,
+        minimumTime: String,
+        maximumTime: String,
+        orderByDepartureDateAsc: Boolean,
+        orderByPriceAsc: Boolean): [Flight]
+    searchRoundTrip(
+        originName: String!,
+        destinationName: String!,
+        departureDate: String!,
+        arrivalDate: String!): [[Flight]]
 }
 
 # Mutaciones para crear, actualizar y eliminar
@@ -15,14 +28,15 @@ type Mutation {
         flightNumber: Float!,
         originId: Float!,
         destinationId: Float!,
+        departureDate: String!,
+        arrivalDate: String!,
         departureTime: String!,
         arrivalTime: String!,
         planeTypeId: Float!,
         price: Float!,
         taxPercentage: Float!,
         surchargePercentage: Float!,
-        isCanceled: Boolean!,
-        hasScales: Boolean!
+        isCanceled: Boolean!
     ): Flight
 
     updateFlight(
@@ -30,14 +44,15 @@ type Mutation {
         flightNumber: Float,
         originId: Float,
         destinationId: Float,
-        departureTime: String,
-        arrivalTime: String,
+        departureDate: String,
+        arrivalDate: String,
+        departureTime: String!,
+        arrivalTime: String!,
         planeTypeId: Float,
         price: Float,
         taxPercentage: Float,
         surchargePercentage: Float,
-        isCanceled: Boolean,
-        hasScales: Boolean
+        isCanceled: Boolean
     ): Flight!
 
     deleteFlight(id: ID!): Boolean!
@@ -61,6 +76,8 @@ type Flight {
     flightNumber: Float!
     origin: Airport!
     destination: Airport!
+    departureDate: String!
+    arrivalDate: String!
     departureTime: String!
     arrivalTime: String!
     planeType: PlaneType!
@@ -68,7 +85,6 @@ type Flight {
     taxPercentage: Float!
     surchargePercentage: Float
     isCanceled: Boolean!
-    hasScales: Boolean
 }
 
 type PlaneType {
@@ -80,9 +96,12 @@ type PlaneType {
 
 type Scale {
     scaleId: ID!
-    flight: Flight!
-    airport: Airport!
+    primaryFlight: Flight!
+    connectingFlight: Flight!
+    stopoverAirport: Airport!
     position: Float!
+    departureDate: String!
+    arrivalDate: String!
     departureTime: String!
     arrivalTime: String!
 }

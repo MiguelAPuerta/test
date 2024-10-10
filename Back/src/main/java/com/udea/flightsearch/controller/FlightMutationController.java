@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Controller
@@ -25,28 +26,29 @@ public class FlightMutationController {
     public Flight createFlight(@Argument Long flightNumber,
                                @Argument Long originId,
                                @Argument Long destinationId,
+                               @Argument String departureDate,
+                               @Argument String arrivalDate,
                                @Argument String departureTime,
                                @Argument String arrivalTime,
                                @Argument Long planeTypeId,
                                @Argument Double price,
                                @Argument BigDecimal taxPercentage,
                                @Argument Integer surchargePercentage,
-                               @Argument Boolean isCanceled,
-                               @Argument Boolean hasScales) {
+                               @Argument Boolean isCanceled) {
 
         Flight flight = new Flight();
         flight.setFlightNumber(flightNumber);
         flight.setOrigin(airportService.getAirportById(originId));
         flight.setDestination(airportService.getAirportById(destinationId));
-        flight.setDepartureTime(LocalDate.parse(departureTime));
-        flight.setArrivalTime(LocalDate.parse(arrivalTime));
+        flight.setDepartureDate(LocalDate.parse(departureDate));
+        flight.setArrivalDate(LocalDate.parse(arrivalDate));
+        flight.setDepartureTime(LocalTime.parse(departureTime));
+        flight.setArrivalTime(LocalTime.parse(arrivalTime));
         flight.setPlaneType(planeTypeService.getPlaneTypeById(planeTypeId));
         flight.setPrice(price);
         flight.setTaxPercentage(taxPercentage);
         flight.setSurchargePercentage(surchargePercentage);
         flight.setCanceled(isCanceled);
-        flight.setHasScales(hasScales);
-
         return flightSearchService.createOrUpdateFlight(flight);
     }
 
@@ -55,8 +57,8 @@ public class FlightMutationController {
                                @Argument Long flightNumber,
                                @Argument Long originId,
                                @Argument Long destinationId,
-                               @Argument String departureTime,
-                               @Argument String arrivalTime,
+                               @Argument String departureDate,
+                               @Argument String arrivalDate,
                                @Argument Long planeTypeId,
                                @Argument Double price,
                                @Argument BigDecimal taxPercentage,
@@ -70,14 +72,13 @@ public class FlightMutationController {
             if (flightNumber != null) existingFlight.setFlightNumber(flightNumber);
             if (originId != null) existingFlight.setOrigin(airportService.getAirportById(originId));
             if (destinationId != null) existingFlight.setDestination(airportService.getAirportById(destinationId));
-            if (departureTime != null) existingFlight.setDepartureTime(LocalDate.parse(departureTime));
-            if (arrivalTime != null) existingFlight.setArrivalTime(LocalDate.parse(arrivalTime));
+            if (departureDate != null) existingFlight.setDepartureDate(LocalDate.parse(departureDate));
+            if (arrivalDate != null) existingFlight.setArrivalDate(LocalDate.parse(arrivalDate));
             if (planeTypeId != null) existingFlight.setPlaneType(planeTypeService.getPlaneTypeById(planeTypeId));
             if (price != null) existingFlight.setPrice(price);
             if (taxPercentage != null) existingFlight.setTaxPercentage(taxPercentage);
             if (surchargePercentage != null) existingFlight.setSurchargePercentage(surchargePercentage);
             if (isCanceled != null) existingFlight.setCanceled(isCanceled);
-            if (hasScales != null) existingFlight.setHasScales(hasScales);
 
             return flightSearchService.createOrUpdateFlight(existingFlight);
         } else {

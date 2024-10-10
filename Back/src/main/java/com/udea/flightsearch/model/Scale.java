@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 
 @Entity
@@ -14,28 +15,43 @@ public class Scale {
     private Long scaleId;
 
     @ManyToOne()
-    @JoinColumn(name = "flightId", referencedColumnName = "flightId")
+    @JoinColumn(name = "primaryFlightId", referencedColumnName = "flightId")
     @NotNull
-    private Flight flight;
+    private Flight primaryFlight;
+
+    @ManyToOne()
+    @JoinColumn(name = "connectingFlightId", referencedColumnName = "flightId")
+    @NotNull
+    private Flight connectingFlight; // The flight that connects after the stopover
 
     @ManyToOne()
     @JoinColumn(name = "airportId", referencedColumnName = "airportId")
-    private Airport airport;
+    private Airport stopoverAirport;
 
     @NotNull
     private Long position;
     @NotNull
-    private LocalDate departureTime;
+    private LocalDate departureDate;
     @NotNull
-    private LocalDate arrivalTime;
+    private LocalDate arrivalDate;
+    @NotNull
+    private LocalTime departureTime;
+    @NotNull
+    private LocalTime arrivalTime;
+    @NotNull
+
+    // Other properties, getters, setters
 
     public Scale() {
     }
 
-    public Scale(Flight flight, Airport airport, Long position, LocalDate departureTime, LocalDate arrivalTime) {
-        this.flight = flight;
-        this.airport = airport;
+    public Scale(Flight primaryFlight, Flight connectingFlight, Airport stopoverAirport, Long position, LocalDate departureDate, LocalDate arrivalDate, LocalTime departureTime, LocalTime arrivalTime, LocalDate stopoverDuration) {
+        this.primaryFlight = primaryFlight;
+        this.connectingFlight = connectingFlight;
+        this.stopoverAirport = stopoverAirport;
         this.position = position;
+        this.departureDate = departureDate;
+        this.arrivalDate = arrivalDate;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
     }
@@ -48,43 +64,67 @@ public class Scale {
         this.scaleId = scaleId;
     }
 
-    public Flight getFlight() {
-        return flight;
+    public @NotNull Flight getPrimaryFlight() {
+        return primaryFlight;
     }
 
-    public void setFlight(Flight flight) {
-        this.flight = flight;
+    public void setPrimaryFlight(@NotNull Flight primaryFlight) {
+        this.primaryFlight = primaryFlight;
     }
 
-    public Airport getAirport() {
-        return airport;
+    public @NotNull Flight getConnectingFlight() {
+        return connectingFlight;
     }
 
-    public void setAirport(Airport airport) {
-        this.airport = airport;
+    public void setConnectingFlight(@NotNull Flight connectingFlight) {
+        this.connectingFlight = connectingFlight;
     }
 
-    public Long getPosition() {
+    public Airport getStopoverAirport() {
+        return stopoverAirport;
+    }
+
+    public void setStopoverAirport(Airport stopoverAirport) {
+        this.stopoverAirport = stopoverAirport;
+    }
+
+    public @NotNull Long getPosition() {
         return position;
     }
 
-    public void setPosition(Long position) {
+    public void setPosition(@NotNull Long position) {
         this.position = position;
     }
 
-    public LocalDate getDepartureTime() {
+    public @NotNull LocalDate getDepartureDate() {
+        return departureDate;
+    }
+
+    public void setDepartureDate(@NotNull LocalDate departureDate) {
+        this.departureDate = departureDate;
+    }
+
+    public @NotNull LocalDate getArrivalDate() {
+        return arrivalDate;
+    }
+
+    public void setArrivalDate(@NotNull LocalDate arrivalDate) {
+        this.arrivalDate = arrivalDate;
+    }
+
+    public @NotNull LocalTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(LocalDate departureTime) {
+    public void setDepartureTime(@NotNull LocalTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public LocalDate getArrivalTime() {
+    public @NotNull LocalTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(LocalDate arrivalTime) {
+    public void setArrivalTime(@NotNull LocalTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 

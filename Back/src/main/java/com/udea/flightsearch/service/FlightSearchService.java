@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,15 +20,81 @@ public class FlightSearchService {
 
     public List<Flight> searchFlights(String originName,
                                       String destinationName,
-                                      LocalDate departureTime,
-                                      LocalDate arrivalTime,
-                                      boolean orderByDepartureTimeAsc,
+                                      LocalDate departureDate,
+                                      LocalDate arrivalDate,
+                                      Double minimumPrice,
+                                      Double maximumPrice,
+                                      LocalDate minimumDate,
+                                      LocalDate maximumDate,
+                                      LocalTime minimumTime,
+                                      LocalTime maximumTime,
+                                      boolean orderByDepartureDateAsc,
                                       boolean orderByPriceAsc
     ) {
         // Use the specification method to search flights
         return flightRepository.findAll(
-                FlightSpecification.filterBy(originName, destinationName, departureTime, arrivalTime, orderByDepartureTimeAsc, orderByPriceAsc)
+                FlightSpecification.filterBy(
+                        originName,
+                        destinationName,
+                        departureDate,
+                        arrivalDate,
+                        minimumPrice,
+                        maximumPrice,
+                        minimumDate,
+                        maximumDate,
+                        minimumTime,
+                        maximumTime,
+                        orderByDepartureDateAsc,
+                        orderByPriceAsc)
         );
+    }
+
+
+    public List<List<Flight>> searchRoundTrip(String originName,
+                                      String destinationName,
+                                      LocalDate departureDate,
+                                      LocalDate arrivalDate
+    ) {
+        // Outbound flights (origin -> destination)
+        List<Flight> FirstLeg = flightRepository.findAll(
+                FlightSpecification.filterBy(
+                        originName,
+                        destinationName,
+                        departureDate,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        false,
+                        true)
+        );
+
+        // Return flights (destination -> origin)
+        List<Flight> SecondLeg = flightRepository.findAll(
+                    FlightSpecification.filterBy(
+                            destinationName,
+                            originName,
+                            arrivalDate,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null,
+                            false,
+                            true)
+        );
+
+        List<List<Flight>> roundTripFlights = new ArrayList<>();
+
+        roundTripFlights.add(FirstLeg);
+        roundTripFlights.add(SecondLeg);
+
+        return roundTripFlights;
     }
 
 
