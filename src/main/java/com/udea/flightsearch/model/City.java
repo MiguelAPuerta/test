@@ -1,7 +1,6 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +10,15 @@ import java.util.Objects;
 public class City {
 
     @Id
-    @NotNull
-    private String iataCode;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "city_id", nullable = false)
+    private Long cityId;
 
-    @NotNull
-    private String name;
+    @Column(name = "name_city", nullable = false, length = 100)
+    private String nameCity;
+    @Column(name = "state", nullable = false, length = 100)
+    private String state;
+    @Column(name = "country", nullable = false, length = 100)
     private String country;
 
     @OneToMany(mappedBy = "city", cascade = CascadeType.ALL)
@@ -24,26 +27,34 @@ public class City {
     public City() {
     }
 
-    public City(String iataCode, String name, String country) {
-        this.iataCode = iataCode;
-        this.name = name;
+    public City(String nameCity, String state, String country) {
+        this.nameCity = nameCity;
+        this.state = state;
         this.country = country;
     }
 
-    public String getIataCode() {
-        return iataCode;
+    public Long getCityId() {
+        return cityId;
     }
 
-    public void setIataCode(String iataCode) {
-        this.iataCode = iataCode;
+    public void setCityId(Long cityId) {
+        this.cityId = cityId;
     }
 
-    public String getName() {
-        return name;
+    public String getNameCity() {
+        return nameCity;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameCity(String nameCity) {
+        this.nameCity = nameCity;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getCountry() {
@@ -67,7 +78,7 @@ public class City {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         City city = (City) o;
-        return Objects.equals(getIataCode(), city.getIataCode());
+        return Objects.equals(getCityId(), city.getCityId());
     }
 
     @Override

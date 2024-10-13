@@ -5,6 +5,7 @@ type Query {
     searchFlights(
         originName: String!,
         destinationName: String!,
+        passengerAmount: Int!,
         departureDate: String,
         arrivalDate: String,
         minimumPrice: Float,
@@ -18,6 +19,7 @@ type Query {
     searchRoundTrip(
         originName: String!,
         destinationName: String!,
+        passengerAmount: Int!,
         departureDate: String!,
         arrivalDate: String!): [[Flight]]
 }
@@ -30,13 +32,12 @@ type Mutation {
         destinationId: Float!,
         departureDate: String!,
         arrivalDate: String!,
-        departureTime: String!,
-        arrivalTime: String!,
-        planeTypeId: Float!,
+        planeId: Float!,
         price: Float!,
         taxPercentage: Float!,
         surchargePercentage: Float!,
-        isCanceled: Boolean!
+        isCanceled: Boolean!,
+        sellSeats: Int
     ): Flight
 
     updateFlight(
@@ -46,13 +47,12 @@ type Mutation {
         destinationId: Float,
         departureDate: String,
         arrivalDate: String,
-        departureTime: String!,
-        arrivalTime: String!,
-        planeTypeId: Float,
+        planeId: Float,
         price: Float,
         taxPercentage: Float,
         surchargePercentage: Float,
-        isCanceled: Boolean
+        isCanceled: Boolean,
+        sellSeats: Int
     ): Flight!
 
     deleteFlight(id: ID!): Boolean!
@@ -62,33 +62,34 @@ type Mutation {
 type Airport {
     airportId: ID!
     city: City!
-    name: String
+    iataCode: String!
+    nameAirport: String!
 }
 
 type City {
-    iataCode: String!
-    name: String!
-    country: String
+    cityId: ID!
+    nameCity: String!
+    state: String!
+    country: String!
 }
 
 type Flight {
     flightId: ID!
-    flightNumber: Float!
+    flightNumber: String!
     origin: Airport!
     destination: Airport!
     departureDate: String!
     arrivalDate: String!
-    departureTime: String!
-    arrivalTime: String!
-    planeType: PlaneType!
+    plane: Plane!
     price: Float!
     taxPercentage: Float!
-    surchargePercentage: Float
+    surchargePercentage: Float!
     isCanceled: Boolean!
+    sellSeats: Int
 }
 
-type PlaneType {
-    planeTypeId: ID!
+type Plane {
+    planeId: ID!
     model: String!
     seatCapacity: Float!
     seatDistribution: String!
@@ -96,25 +97,36 @@ type PlaneType {
 
 type Scale {
     scaleId: ID!
-    primaryFlight: Flight!
-    connectingFlight: Flight!
-    stopoverAirport: Airport!
-    position: Float!
+    flight: Flight!
+    airport: Airport!
     departureDate: String!
     arrivalDate: String!
-    departureTime: String!
-    arrivalTime: String!
+    plane: Plane!
+    scaleOrder: Float!
 }
 
-type Seat {
-    seatId: ID!
-    planeType: PlaneType!
-    seatNumber: String!
-    seatClass: SeatClass!
+type Account {
+    accountId: ID!
+    username: String!
 }
 
-type SeatClass {
-    classId: ID!
-    name: String
-    description: String
+type ViewedFlight {
+    viewId: ID!
+    account: Account!
+    flight: Flight!
+    viewDate: String!
+}
+
+type searchHistory {
+    searchId: ID!
+    account: Account!
+    searchDate: String!
+    origin: Airport!
+    destination: Airport!
+    departureDate: String
+    arrivalDate: String
+    numPassengers: Int
+    priceRangeMin: Float
+    priceRangeMax: Float
+    resultsCount: Int
 }

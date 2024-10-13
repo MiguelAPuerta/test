@@ -1,10 +1,8 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -12,48 +10,47 @@ public class Scale {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "scale_id", nullable = false)
     private Long scaleId;
 
     @ManyToOne()
-    @JoinColumn(name = "primaryFlightId", referencedColumnName = "flightId")
-    @NotNull
-    private Flight primaryFlight;
+    @JoinColumn(name = "flight_id", referencedColumnName = "flight_id", nullable = false)
+    private Flight flight;
 
     @ManyToOne()
-    @JoinColumn(name = "connectingFlightId", referencedColumnName = "flightId")
-    @NotNull
-    private Flight connectingFlight; // The flight that connects after the stopover
+    @JoinColumn(name = "airport_id", referencedColumnName = "airport_id", nullable = false)
+    private Airport airport;
+
+    @Column(name = "scale_order", nullable = false)
+    private Integer scaleOrder;
+
+    @Column(name = "departure_date", nullable = false)
+    private Timestamp departureDate;
+    @Column(name = "arrival_date", nullable = false)
+    private Timestamp arrivalDate;
 
     @ManyToOne()
-    @JoinColumn(name = "airportId", referencedColumnName = "airportId")
-    private Airport stopoverAirport;
+    @JoinColumn(name = "plane_id", referencedColumnName = "plane_id", nullable = false)
+    private Plane plane;
 
-    @NotNull
-    private Long position;
-    @NotNull
-    private LocalDate departureDate;
-    @NotNull
-    private LocalDate arrivalDate;
-    @NotNull
-    private LocalTime departureTime;
-    @NotNull
-    private LocalTime arrivalTime;
-    @NotNull
-
-    // Other properties, getters, setters
+    @PrePersist
+    @PreUpdate
+    public void validateDates() {
+        if (departureDate.after(arrivalDate)) {
+            throw new IllegalArgumentException("Departure date must be before arrival date");
+        }
+    }
 
     public Scale() {
     }
 
-    public Scale(Flight primaryFlight, Flight connectingFlight, Airport stopoverAirport, Long position, LocalDate departureDate, LocalDate arrivalDate, LocalTime departureTime, LocalTime arrivalTime, LocalDate stopoverDuration) {
-        this.primaryFlight = primaryFlight;
-        this.connectingFlight = connectingFlight;
-        this.stopoverAirport = stopoverAirport;
-        this.position = position;
+    public Scale(Flight flight, Airport airport, Timestamp departureDate, Timestamp arrivalDate, Plane plane, Integer scaleOrder) {
+        this.flight = flight;
+        this.airport = airport;
         this.departureDate = departureDate;
         this.arrivalDate = arrivalDate;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
+        this.plane = plane;
+        this.scaleOrder = scaleOrder;
     }
 
     public Long getScaleId() {
@@ -64,68 +61,52 @@ public class Scale {
         this.scaleId = scaleId;
     }
 
-    public @NotNull Flight getPrimaryFlight() {
-        return primaryFlight;
+    public Flight getFlight() {
+        return flight;
     }
 
-    public void setPrimaryFlight(@NotNull Flight primaryFlight) {
-        this.primaryFlight = primaryFlight;
+    public void setFlight(Flight flight) {
+        this.flight = flight;
     }
 
-    public @NotNull Flight getConnectingFlight() {
-        return connectingFlight;
+    public Airport getAirport() {
+        return airport;
     }
 
-    public void setConnectingFlight(@NotNull Flight connectingFlight) {
-        this.connectingFlight = connectingFlight;
+    public void setAirport(Airport airport) {
+        this.airport = airport;
     }
 
-    public Airport getStopoverAirport() {
-        return stopoverAirport;
-    }
-
-    public void setStopoverAirport(Airport stopoverAirport) {
-        this.stopoverAirport = stopoverAirport;
-    }
-
-    public @NotNull Long getPosition() {
-        return position;
-    }
-
-    public void setPosition(@NotNull Long position) {
-        this.position = position;
-    }
-
-    public @NotNull LocalDate getDepartureDate() {
+    public Timestamp getDepartureDate() {
         return departureDate;
     }
 
-    public void setDepartureDate(@NotNull LocalDate departureDate) {
+    public void setDepartureDate(Timestamp departureDate) {
         this.departureDate = departureDate;
     }
 
-    public @NotNull LocalDate getArrivalDate() {
+    public Timestamp getArrivalDate() {
         return arrivalDate;
     }
 
-    public void setArrivalDate(@NotNull LocalDate arrivalDate) {
+    public void setArrivalDate(Timestamp arrivalDate) {
         this.arrivalDate = arrivalDate;
     }
 
-    public @NotNull LocalTime getDepartureTime() {
-        return departureTime;
+    public Plane getPlane() {
+        return plane;
     }
 
-    public void setDepartureTime(@NotNull LocalTime departureTime) {
-        this.departureTime = departureTime;
+    public void setPlane(Plane plane) {
+        this.plane = plane;
     }
 
-    public @NotNull LocalTime getArrivalTime() {
-        return arrivalTime;
+    public Integer getScaleOrder() {
+        return scaleOrder;
     }
 
-    public void setArrivalTime(@NotNull LocalTime arrivalTime) {
-        this.arrivalTime = arrivalTime;
+    public void setScaleOrder(Integer scaleOrder) {
+        this.scaleOrder = scaleOrder;
     }
 
     @Override

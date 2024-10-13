@@ -8,10 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface ICityRepository extends JpaRepository<City, Long> {
-
-    boolean existsByIataCode(String iataCode);
-
-    Optional<City> findByIataCodeContainingIgnoreCase(String iataCode);
-
-    void deleteByIataCode(String iataCode);
 }

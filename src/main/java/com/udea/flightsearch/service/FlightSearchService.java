@@ -20,6 +20,7 @@ public class FlightSearchService {
 
     public List<Flight> searchFlights(String originName,
                                       String destinationName,
+                                      Integer passengerAmount,
                                       LocalDate departureDate,
                                       LocalDate arrivalDate,
                                       Double minimumPrice,
@@ -36,6 +37,7 @@ public class FlightSearchService {
                 FlightSpecification.filterBy(
                         originName,
                         destinationName,
+                        passengerAmount,
                         departureDate,
                         arrivalDate,
                         minimumPrice,
@@ -52,6 +54,7 @@ public class FlightSearchService {
 
     public List<List<Flight>> searchRoundTrip(String originName,
                                       String destinationName,
+                                      Integer passengerAmount,
                                       LocalDate departureDate,
                                       LocalDate arrivalDate
     ) {
@@ -60,6 +63,7 @@ public class FlightSearchService {
                 FlightSpecification.filterBy(
                         originName,
                         destinationName,
+                        passengerAmount,
                         departureDate,
                         null,
                         null,
@@ -77,6 +81,7 @@ public class FlightSearchService {
                     FlightSpecification.filterBy(
                             destinationName,
                             originName,
+                            passengerAmount,
                             arrivalDate,
                             null,
                             null,

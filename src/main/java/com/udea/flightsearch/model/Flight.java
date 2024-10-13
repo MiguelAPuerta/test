@@ -1,11 +1,11 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,63 +15,75 @@ public class Flight {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "flight_id", nullable = false)
     private Long flightId;
 
-    @NotNull
-    private Long flightNumber;
+    @Column(name = "flight_number", nullable = false, length = 9)
+    private String flightNumber;
 
     @ManyToOne()
-    @JoinColumn(name = "origin", referencedColumnName = "airportId", nullable = false)
+    @JoinColumn(name = "origin", referencedColumnName = "airport_id", nullable = false)
     private Airport origin;
 
     @ManyToOne()
-    @JoinColumn(name = "destination", referencedColumnName = "airportId", nullable = false)
+    @JoinColumn(name = "destination", referencedColumnName = "airport_id", nullable = false)
     private Airport destination;
 
-    @NotNull
-    private LocalDate departureDate;
-    @NotNull
-    private LocalDate arrivalDate;
-    @NotNull
-    private LocalTime departureTime;
-    @NotNull
-    private LocalTime arrivalTime;
+    @Column(name = "departure_date", nullable = false)
+    private Timestamp departureDate;
+    @Column(name = "arrival_date", nullable = false)
+    private Timestamp arrivalDate;
 
     @ManyToOne()
-    @JoinColumn(name = "planeType", referencedColumnName = "planeTypeId", nullable = false)
-    private PlaneType planeType;
+    @JoinColumn(name = "plane_id", referencedColumnName = "plane_id", nullable = false)
+    private Plane plane;
 
-    @NotNull
-    private double price;
-    @NotNull
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
+
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "100.0")
+    @Column(name = "tax_percentage", nullable = false, precision = 5, scale = 2)
     private BigDecimal taxPercentage;
-    private Integer surchargePercentage;
-    @NotNull
+
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "100.0")
+    @Column(name = "surcharge_percentage", nullable = false, precision = 5, scale = 2)
+    private BigDecimal surchargePercentage;
+
+    @Column(name = "is_canceled", nullable = false)
     private boolean isCanceled;
+    @Column(name = "sell_seats")
+    private Integer sellSeats;
 
-    @OneToMany(mappedBy = "primaryFlight", cascade = CascadeType.ALL)
-    private List<Scale> primaryFlights = new ArrayList<>();
+    @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL)
+    private List<Scale> scales = new ArrayList<>();
 
-    @OneToMany(mappedBy = "connectingFlight", cascade = CascadeType.ALL)
-    private List<Scale> connectingFlight = new ArrayList<>();
+    @PrePersist
+    @PreUpdate
+    public void validateDates() {
+        if (departureDate.after(arrivalDate)) {
+            throw new IllegalArgumentException("Departure date must be before arrival date");
+        }
+    }
+
+
 
     public Flight() {
     }
 
-    public Flight(Long flightId, Long flightNumber, Airport origin, Airport destination, LocalDate departureDate, LocalDate arrivalDate, LocalTime departureTime, LocalTime arrivalTime, PlaneType planeType, double price, BigDecimal taxPercentage, Integer surchargePercentage, boolean isCanceled, boolean hasScales) {
-        this.flightId = flightId;
+    public Flight(String flightNumber, Airport origin, Airport destination, Timestamp departureDate, Timestamp arrivalDate, Plane plane, BigDecimal price, BigDecimal taxPercentage, BigDecimal surchargePercentage, boolean isCanceled, Integer sellSeats) {
         this.flightNumber = flightNumber;
         this.origin = origin;
         this.destination = destination;
         this.departureDate = departureDate;
         this.arrivalDate = arrivalDate;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
-        this.planeType = planeType;
+        this.plane = plane;
         this.price = price;
         this.taxPercentage = taxPercentage;
         this.surchargePercentage = surchargePercentage;
         this.isCanceled = isCanceled;
+        this.sellSeats = sellSeats;
     }
 
     public Long getFlightId() {
@@ -82,11 +94,11 @@ public class Flight {
         this.flightId = flightId;
     }
 
-    public Long getFlightNumber() {
+    public String getFlightNumber() {
         return flightNumber;
     }
 
-    public void setFlightNumber(Long flightNumber) {
+    public void setFlightNumber(String flightNumber) {
         this.flightNumber = flightNumber;
     }
 
@@ -106,51 +118,35 @@ public class Flight {
         this.destination = destination;
     }
 
-    public LocalDate getDepartureDate() {
+    public Timestamp getDepartureDate() {
         return departureDate;
     }
 
-    public void setDepartureDate(LocalDate departureDate) {
+    public void setDepartureDate(Timestamp departureDate) {
         this.departureDate = departureDate;
     }
 
-    public LocalDate getArrivalDate() {
+    public Timestamp getArrivalDate() {
         return arrivalDate;
     }
 
-    public void setArrivalDate(LocalDate arrivalDate) {
+    public void setArrivalDate(Timestamp arrivalDate) {
         this.arrivalDate = arrivalDate;
     }
 
-    public @NotNull LocalTime getDepartureTime() {
-        return departureTime;
+    public Plane getPlane() {
+        return plane;
     }
 
-    public void setDepartureTime(@NotNull LocalTime departureTime) {
-        this.departureTime = departureTime;
+    public void setPlane(Plane planeId) {
+        this.plane = planeId;
     }
 
-    public @NotNull LocalTime getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(@NotNull LocalTime arrivalTime) {
-        this.arrivalTime = arrivalTime;
-    }
-
-    public PlaneType getPlaneType() {
-        return planeType;
-    }
-
-    public void setPlaneType(PlaneType planeType) {
-        this.planeType = planeType;
-    }
-
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -162,11 +158,11 @@ public class Flight {
         this.taxPercentage = taxPercentage;
     }
 
-    public Integer getSurchargePercentage() {
+    public BigDecimal getSurchargePercentage() {
         return surchargePercentage;
     }
 
-    public void setSurchargePercentage(Integer surchargePercentage) {
+    public void setSurchargePercentage(BigDecimal surchargePercentage) {
         this.surchargePercentage = surchargePercentage;
     }
 
@@ -178,20 +174,20 @@ public class Flight {
         isCanceled = canceled;
     }
 
-    public List<Scale> getPrimaryFlights() {
-        return primaryFlights;
+    public Integer getSellSeats() {
+        return sellSeats;
     }
 
-    public void setPrimaryFlights(List<Scale> primaryFlights) {
-        this.primaryFlights = primaryFlights;
+    public void setSellSeats(Integer sellSeats) {
+        this.sellSeats = sellSeats;
     }
 
-    public List<Scale> getConnectingFlight() {
-        return connectingFlight;
+    public List<Scale> getScales() {
+        return scales;
     }
 
-    public void setConnectingFlight(List<Scale> connectingFlight) {
-        this.connectingFlight = connectingFlight;
+    public void setScales(List<Scale> scales) {
+        this.scales = scales;
     }
 
     //IDIOMS

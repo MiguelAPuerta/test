@@ -33,6 +33,7 @@ public class FlightController {
     public List<Flight> searchFlights(
             @Argument String originName,
             @Argument String destinationName,
+            @Argument Integer passengerAmount,
             @Argument LocalDate departureDate,
             @Argument LocalDate arrivalDate,
             //Search between price values
@@ -48,6 +49,9 @@ public class FlightController {
             @Argument Boolean orderByDepartureDateAsc,
             @Argument Boolean orderByPriceAsc) {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
+        if (passengerAmount == null) {
+            passengerAmount = 1;
+        }
         if (minimumTime == null) {
             minimumTime = "0:00";
         }
@@ -63,6 +67,7 @@ public class FlightController {
         return flightSearchService.searchFlights(
                 originName,
                 destinationName,
+                passengerAmount,
                 departureDate,
                 arrivalDate,
                 //Search between price values
@@ -83,12 +88,14 @@ public class FlightController {
     public List<List<Flight>> searchRoundTrip(
             @Argument String originName,
             @Argument String destinationName,
+            @Argument Integer passengerAmount,
             @Argument LocalDate departureDate,
             @Argument LocalDate arrivalDate)
             {
         return flightSearchService.searchRoundTrip(
                 originName,
                 destinationName,
+                passengerAmount,
                 departureDate,
                 arrivalDate);
     }

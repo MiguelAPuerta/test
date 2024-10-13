@@ -1,5 +1,6 @@
 package com.udea.flightsearch.service;
 
+import com.udea.flightsearch.model.Airport;
 import com.udea.flightsearch.model.City;
 import com.udea.flightsearch.repository.ICityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,10 @@ public class CityService {
         return cityRepository.findAll();
     }
 
-    // Funcion para obtener una ciudad por iataCode
-    public City getCityByIataCode(String iataCode) {
-        Optional<City> cityOpt = cityRepository.findByIataCodeContainingIgnoreCase(iataCode);
-        return cityOpt.orElseThrow(() -> new RuntimeException("City not found with iataCode: " + iataCode));
+    // Funcion para obtener una ciudad por su ID
+    public City getAirportById(Long id) {
+        Optional<City> cityOpt = cityRepository.findById(id);
+        return cityOpt.orElseThrow(() -> new RuntimeException("City not found with id: " + id));
     }
 
     // Funcion para crear o actualizar una ciudad
@@ -30,12 +31,12 @@ public class CityService {
         return cityRepository.save(city);
     }
 
-    // Funcion para eliminar una ciudad por su IataCode
-    public void deleteCity(String iataCode) {
+    // Funcion para eliminar una ciudad por su ID
+    public void deleteAirport(Long id) {
         // Manejo de error: verificar si existe antes de eliminar
-        if (!cityRepository.existsByIataCode(iataCode)) {
-            throw new RuntimeException("Cannot delete City. Not found with iataCode: " + iataCode);
+        if (!cityRepository.existsById(id)) {
+            throw new RuntimeException("Cannot delete City. Not found with id: " + id);
         }
-        cityRepository.deleteByIataCode(iataCode);
+        cityRepository.deleteById(id);
     }
 }

@@ -38,4 +38,19 @@ public class AirportService {
         }
         airportRepository.deleteById(id);
     }
+
+    // Funcion para obtener una aeropuerto por iataCode
+    public Airport getCityByIataCode(String iataCode) {
+        Optional<Airport> cityOpt = airportRepository.findByIataCodeContainingIgnoreCase(iataCode);
+        return cityOpt.orElseThrow(() -> new RuntimeException("Airport not found with iataCode: " + iataCode));
+    }
+
+    // Funcion para eliminar una aeropuerto por su IataCode
+    public void deleteCity(String iataCode) {
+        // Manejo de error: verificar si existe antes de eliminar
+        if (!airportRepository.existsByIataCode(iataCode)) {
+            throw new RuntimeException("Cannot delete Airport. Not found with iataCode: " + iataCode);
+        }
+        airportRepository.deleteByIataCode(iataCode);
+    }
 }

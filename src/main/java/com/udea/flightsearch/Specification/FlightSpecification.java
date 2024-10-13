@@ -1,13 +1,14 @@
 package com.udea.flightsearch.Specification;
 
+import com.udea.flightsearch.model.Plane;
 import jakarta.persistence.criteria.*;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.udea.flightsearch.model.Flight;
 import com.udea.flightsearch.model.Airport;
 import com.udea.flightsearch.model.City;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ public class FlightSpecification {
     public static Specification<Flight> filterBy(
             String originName,
             String destinationName,
+            Integer passengerAmount,
             LocalDate departureDate,
             LocalDate arrivalDate,
             Double minimumPrice,
@@ -37,24 +39,28 @@ public class FlightSpecification {
             if (originName != null && !originName.isEmpty()) {
                 Join<Flight, Airport> originJoin = root.join("origin");   // Flight -> Airport (origin)
                 Join<Airport, City> originCityJoin = originJoin.join("city"); // Airport -> City
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(originCityJoin.get("name")), "%" + originName.toLowerCase() + "%"));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(originCityJoin.get("nameCity")), "%" + originName.toLowerCase() + "%"));
             }
 
             // Realiza lo mismo que el anterior pero para el nombre de destino
             if (destinationName != null && !destinationName.isEmpty()) {
                 Join<Flight, Airport> destinationJoin = root.join("destination");   // Flight -> Airport (destination)
                 Join<Airport, City> destinationCityJoin = destinationJoin.join("city"); // Airport -> City
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(destinationCityJoin.get("name")), "%" + destinationName.toLowerCase() + "%"));
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(destinationCityJoin.get("nameCity")), "%" + destinationName.toLowerCase() + "%"));
             }
 
             // Si el dia de salida es especificado, se agrega al query de busqueda
             if (departureDate != null) {
-                predicates.add(criteriaBuilder.equal(root.get("departureDate"), departureDate));
+                Timestamp StartOfDay = Timestamp.valueOf(departureDate.atStartOfDay());
+                Timestamp EndOfDay = Timestamp.valueOf(departureDate.plusDays(1).atStartOfDay().minusNanos(1));
+                predicates.add(criteriaBuilder.between(root.get("departureDate"), StartOfDay, EndOfDay));
             }
 
             // Si el dia de llegada es especificado, se agrega al query de busqueda
             if (arrivalDate != null) {
-                predicates.add(criteriaBuilder.equal(root.get("arrivalDate"), arrivalDate));
+                Timestamp StartOfDay = Timestamp.valueOf(arrivalDate.atStartOfDay());
+                Timestamp EndOfDay = Timestamp.valueOf(arrivalDate.plusDays(1).atStartOfDay().minusNanos(1));
+                predicates.add(criteriaBuilder.between(root.get("arrivalDate"), StartOfDay, EndOfDay));
             }
 
             // Filtra la busqueda entre un rango de precios
@@ -62,22 +68,54 @@ public class FlightSpecification {
                 predicates.add(criteriaBuilder.between(root.get("price"), minimumPrice, maximumPrice));
             }
 
-            // Filtra la busqueda entre un rango de Fechas
+            // Filtra la busqueda entre un rango de Fechas (Ignorando la hora)
             if (minimumDate != null && maximumDate != null) {
-                predicates.add(criteriaBuilder.between(root.get("departureDate"), minimumDate, maximumDate));
+                Timestamp minimumDateStartOfDay = Timestamp.valueOf(minimumDate.atStartOfDay());
+                Timestamp maximumDateEndOfDay = Timestamp.valueOf(maximumDate.plusDays(1).atStartOfDay().minusNanos(1));
+                predicates.add(criteriaBuilder.between(root.get("departureDate"), minimumDateStartOfDay, maximumDateEndOfDay));
             }
 
-            // Filtra la busqueda entre un rango de horarios de salida
+            // Filtra la busqueda entre un rango de horarios de salida (Ignorando Fecha)
             if (minimumTime != null && maximumTime != null) {
-                predicates.add(criteriaBuilder.between(root.get("departureTime"), minimumTime, maximumTime));
+                Expression<Integer> departureHour = criteriaBuilder.function("DATE_PART", Integer.class, criteriaBuilder.literal("HOUR"), root.get("departureDate"));
+                Expression<Integer> departureMinute = criteriaBuilder.function("DATE_PART", Integer.class, criteriaBuilder.literal("MINUTE"), root.get("departureDate"));
+
+                Predicate timePredicate = criteriaBuilder.and(
+                        criteriaBuilder.or(
+                                criteriaBuilder.and(
+                                        criteriaBuilder.equal(departureHour, minimumTime.getHour()),
+                                        criteriaBuilder.greaterThanOrEqualTo(departureMinute, minimumTime.getMinute())
+                                ),
+                                criteriaBuilder.and(
+                                        criteriaBuilder.equal(departureHour, maximumTime.getHour()),
+                                        criteriaBuilder.lessThanOrEqualTo(departureMinute, maximumTime.getMinute())
+                                ),
+                                criteriaBuilder.and(
+                                        criteriaBuilder.greaterThan(departureHour, minimumTime.getHour()),
+                                        criteriaBuilder.lessThan(departureHour, maximumTime.getHour())
+                                )
+                        )
+                );
+
+                predicates.add(timePredicate);
             }
 
             //retorna solo vuelos que no estan cancelados
             predicates.add(criteriaBuilder.equal(root.get("isCanceled"), false));
 
+
+            // Join with the 'Plane' entity
+            Join<Flight, Plane> planeJoin = root.join("plane");
+
+            // Calculate available seats: seatCapacity - soldSeats
+            Expression<Integer> availableSeats = criteriaBuilder.diff(planeJoin.get("seatCapacity"), root.get("sellSeats"));
+
+            // Add the predicate to check if availableSeats is greater than or equal to the specified minimum
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(availableSeats, passengerAmount));
+
             // Realiza ordenamiento, ya sea por dia de salida o por precio, este se realiza de manera ascendente
             if (orderByDepartureDateAsc) {
-                query.orderBy(criteriaBuilder.asc(root.get("departureDate")), criteriaBuilder.asc(root.get("departureTime")));
+                query.orderBy(criteriaBuilder.asc(root.get("departureDate")));
             } else if (orderByPriceAsc) {
                 query.orderBy(criteriaBuilder.asc(root.get("price")));
             }

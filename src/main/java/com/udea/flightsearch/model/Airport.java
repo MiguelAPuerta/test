@@ -1,7 +1,6 @@
 package com.udea.flightsearch.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,17 +11,19 @@ public class Airport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "airportId")
+    @Column(name = "airport_id", nullable = false)
     private Long airportId;
 
     @ManyToOne()
-    @JoinColumn(name = "iataCode", referencedColumnName = "iataCode", nullable = false)
-    @NotNull
+    @JoinColumn(name = "city_id", referencedColumnName = "city_id", nullable = false)
     private City city;
 
-    private String name;
+    @Column(name = "iata_code", nullable = false, unique = true, length = 3)
+    private String iataCode;
+    @Column(name = "name_airport", nullable = false, length = 100)
+    private String nameAirport;
 
-    @OneToMany(mappedBy = "stopoverAirport", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "airport", cascade = CascadeType.ALL)
     private List<Scale> scales = new ArrayList<>();
 
     @OneToMany(mappedBy = "origin", cascade = CascadeType.ALL)
@@ -34,9 +35,10 @@ public class Airport {
     public Airport() {
     }
 
-    public Airport(City city, String name) {
+    public Airport(City city, String iataCode, String nameAirport) {
         this.city = city;
-        this.name = name;
+        this.iataCode = iataCode;
+        this.nameAirport = nameAirport;
     }
 
     public Long getAirportId() {
@@ -55,12 +57,20 @@ public class Airport {
         this.city = city;
     }
 
-    public String getName() {
-        return name;
+    public String getIataCode() {
+        return iataCode;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setIataCode(String iataCode) {
+        this.iataCode = iataCode;
+    }
+
+    public String getNameAirport() {
+        return nameAirport;
+    }
+
+    public void setNameAirport(String nameAirport) {
+        this.nameAirport = nameAirport;
     }
 
     public List<Scale> getScales() {
