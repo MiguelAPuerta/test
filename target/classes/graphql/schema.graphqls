@@ -1,0 +1,120 @@
+# Consultas para obtener información
+type Query {
+    getAllFlights: [Flight!]!
+    getFlightById(id: ID!): Flight
+    searchFlights(
+        originName: String!,
+        destinationName: String!,
+        departureDate: String,
+        arrivalDate: String,
+        minimumPrice: Float,
+        maximumPrice: Float,
+        minimumDate: String,
+        maximumDate: String,
+        minimumTime: String,
+        maximumTime: String,
+        orderByDepartureDateAsc: Boolean,
+        orderByPriceAsc: Boolean): [Flight]
+    searchRoundTrip(
+        originName: String!,
+        destinationName: String!,
+        departureDate: String!,
+        arrivalDate: String!): [[Flight]]
+}
+
+# Mutaciones para crear, actualizar y eliminar
+type Mutation {
+    createFlight(
+        flightNumber: Float!,
+        originId: Float!,
+        destinationId: Float!,
+        departureDate: String!,
+        arrivalDate: String!,
+        departureTime: String!,
+        arrivalTime: String!,
+        planeTypeId: Float!,
+        price: Float!,
+        taxPercentage: Float!,
+        surchargePercentage: Float!,
+        isCanceled: Boolean!
+    ): Flight
+
+    updateFlight(
+        id: ID!,
+        flightNumber: Float,
+        originId: Float,
+        destinationId: Float,
+        departureDate: String,
+        arrivalDate: String,
+        departureTime: String!,
+        arrivalTime: String!,
+        planeTypeId: Float,
+        price: Float,
+        taxPercentage: Float,
+        surchargePercentage: Float,
+        isCanceled: Boolean
+    ): Flight!
+
+    deleteFlight(id: ID!): Boolean!
+}
+
+# Definición de tipos
+type Airport {
+    airportId: ID!
+    city: City!
+    name: String
+}
+
+type City {
+    iataCode: String!
+    name: String!
+    country: String
+}
+
+type Flight {
+    flightId: ID!
+    flightNumber: Float!
+    origin: Airport!
+    destination: Airport!
+    departureDate: String!
+    arrivalDate: String!
+    departureTime: String!
+    arrivalTime: String!
+    planeType: PlaneType!
+    price: Float!
+    taxPercentage: Float!
+    surchargePercentage: Float
+    isCanceled: Boolean!
+}
+
+type PlaneType {
+    planeTypeId: ID!
+    model: String!
+    seatCapacity: Float!
+    seatDistribution: String!
+}
+
+type Scale {
+    scaleId: ID!
+    primaryFlight: Flight!
+    connectingFlight: Flight!
+    stopoverAirport: Airport!
+    position: Float!
+    departureDate: String!
+    arrivalDate: String!
+    departureTime: String!
+    arrivalTime: String!
+}
+
+type Seat {
+    seatId: ID!
+    planeType: PlaneType!
+    seatNumber: String!
+    seatClass: SeatClass!
+}
+
+type SeatClass {
+    classId: ID!
+    name: String
+    description: String
+}
