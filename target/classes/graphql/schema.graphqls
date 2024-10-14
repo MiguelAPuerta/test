@@ -27,7 +27,7 @@ type Query {
 # Mutaciones para crear, actualizar y eliminar
 type Mutation {
     createFlight(
-        flightNumber: Float!,
+        flightNumber: String!,
         originId: Float!,
         destinationId: Float!,
         departureDate: String!,
@@ -42,7 +42,7 @@ type Mutation {
 
     updateFlight(
         id: ID!,
-        flightNumber: Float,
+        flightNumber: String!,
         originId: Float,
         destinationId: Float,
         departureDate: String,

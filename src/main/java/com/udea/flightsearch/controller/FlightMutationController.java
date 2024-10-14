@@ -27,7 +27,7 @@ public class FlightMutationController {
                                @Argument Long destinationId,
                                @Argument String departureDate,
                                @Argument String arrivalDate,
-                               @Argument Long planeTypeId,
+                               @Argument Long planeId,
                                @Argument BigDecimal price,
                                @Argument BigDecimal taxPercentage,
                                @Argument BigDecimal surchargePercentage,
@@ -40,7 +40,7 @@ public class FlightMutationController {
         flight.setDestination(airportService.getAirportById(destinationId));
         flight.setDepartureDate(Timestamp.valueOf(departureDate));
         flight.setArrivalDate(Timestamp.valueOf(arrivalDate));
-        flight.setPlane(planeService.getPlaneById(planeTypeId));
+        flight.setPlane(planeService.getPlaneById(planeId));
         flight.setPrice(price);
         flight.setTaxPercentage(taxPercentage);
         flight.setSurchargePercentage(surchargePercentage);
@@ -56,7 +56,7 @@ public class FlightMutationController {
                                @Argument Long destinationId,
                                @Argument String departureDate,
                                @Argument String arrivalDate,
-                               @Argument Long planeTypeId,
+                               @Argument Long planeId,
                                @Argument BigDecimal price,
                                @Argument BigDecimal taxPercentage,
                                @Argument BigDecimal surchargePercentage,
@@ -71,7 +71,7 @@ public class FlightMutationController {
             if (destinationId != null) existingFlight.setDestination(airportService.getAirportById(destinationId));
             if (departureDate != null) existingFlight.setDepartureDate(Timestamp.valueOf(departureDate));
             if (arrivalDate != null) existingFlight.setArrivalDate(Timestamp.valueOf(arrivalDate));
-            if (planeTypeId != null) existingFlight.setPlane(planeService.getPlaneById(planeTypeId));
+            if (planeId != null) existingFlight.setPlane(planeService.getPlaneById(planeId));
             if (price != null) existingFlight.setPrice(price);
             if (taxPercentage != null) existingFlight.setTaxPercentage(taxPercentage);
             if (surchargePercentage != null) existingFlight.setSurchargePercentage(surchargePercentage);
