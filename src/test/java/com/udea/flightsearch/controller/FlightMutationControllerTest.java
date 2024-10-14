@@ -1,4 +1,5 @@
 package com.udea.flightsearch.controller;
+
 import com.udea.flightsearch.model.Airport;
 import com.udea.flightsearch.model.Flight;
 import com.udea.flightsearch.model.Plane;
@@ -10,9 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.graphql.data.method.annotation.Argument;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
