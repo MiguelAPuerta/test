@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.Optional;
 
 @Controller
@@ -25,8 +26,8 @@ public class FlightMutationController {
     public Flight createFlight(@Argument String flightNumber,
                                @Argument Long originId,
                                @Argument Long destinationId,
-                               @Argument String departureDate,
-                               @Argument String arrivalDate,
+                               @Argument String departureDateTime,
+                               @Argument String arrivalDateTime,
                                @Argument Long planeId,
                                @Argument BigDecimal price,
                                @Argument BigDecimal taxPercentage,
@@ -38,8 +39,8 @@ public class FlightMutationController {
         flight.setFlightNumber(flightNumber);
         flight.setOrigin(airportService.getAirportById(originId));
         flight.setDestination(airportService.getAirportById(destinationId));
-        flight.setDepartureDate(Timestamp.valueOf(departureDate));
-        flight.setArrivalDate(Timestamp.valueOf(arrivalDate));
+        flight.setDepartureDate(Timestamp.valueOf(departureDateTime));
+        flight.setArrivalDate(Timestamp.valueOf(arrivalDateTime));
         flight.setPlane(planeService.getPlaneById(planeId));
         flight.setPrice(price);
         flight.setTaxPercentage(taxPercentage);
@@ -54,8 +55,8 @@ public class FlightMutationController {
                                @Argument String flightNumber,
                                @Argument Long originId,
                                @Argument Long destinationId,
-                               @Argument String departureDate,
-                               @Argument String arrivalDate,
+                               @Argument String departureDateTime,
+                               @Argument String arrivalDateTime,
                                @Argument Long planeId,
                                @Argument BigDecimal price,
                                @Argument BigDecimal taxPercentage,
@@ -69,8 +70,8 @@ public class FlightMutationController {
             if (flightNumber != null) existingFlight.setFlightNumber(flightNumber);
             if (originId != null) existingFlight.setOrigin(airportService.getAirportById(originId));
             if (destinationId != null) existingFlight.setDestination(airportService.getAirportById(destinationId));
-            if (departureDate != null) existingFlight.setDepartureDate(Timestamp.valueOf(departureDate));
-            if (arrivalDate != null) existingFlight.setArrivalDate(Timestamp.valueOf(arrivalDate));
+            if (departureDateTime != null) existingFlight.setDepartureDate(Timestamp.valueOf(departureDateTime));
+            if (arrivalDateTime != null) existingFlight.setArrivalDate(Timestamp.valueOf(arrivalDateTime));
             if (planeId != null) existingFlight.setPlane(planeService.getPlaneById(planeId));
             if (price != null) existingFlight.setPrice(price);
             if (taxPercentage != null) existingFlight.setTaxPercentage(taxPercentage);
