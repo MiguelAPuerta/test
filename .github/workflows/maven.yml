@@ -44,6 +44,3 @@ jobs:
           name: test-results
           path: target/surefire-reports/*.xml
               
-
-
-
