@@ -49,9 +49,16 @@ public class FlightController {
             @Argument Boolean orderByDepartureDateAsc,
             @Argument Boolean orderByPriceAsc) {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
-        if (passengerAmount == null) {
-            passengerAmount = 1;
-        }
+        exceptionHandler(departureDate,
+                        arrivalDate,
+                        passengerAmount,
+                        minimumPrice,
+                        maximumPrice,
+                        minimumDate,
+                        maximumDate,
+                        minimumTime,
+                        maximumTime,
+                        timeFormatter);
         if (minimumTime == null) {
             minimumTime = "0:00";
         }
@@ -92,11 +99,66 @@ public class FlightController {
             @Argument LocalDate departureDate,
             @Argument LocalDate arrivalDate)
             {
+        exceptionHandler(departureDate,
+                        arrivalDate,
+                        passengerAmount,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
         return flightSearchService.searchRoundTrip(
                 originName,
                 destinationName,
                 passengerAmount,
                 departureDate,
                 arrivalDate);
+    }
+
+    private void exceptionHandler (
+                              LocalDate departureDate,
+                              LocalDate arrivalDate,
+                              Integer passengerAmount,
+                              Double minimumPrice,
+                              Double maximumPrice,
+                              LocalDate minimumDate,
+                              LocalDate maximumDate,
+                              String minimumTime,
+                              String maximumTime,
+                              DateTimeFormatter timeFormatter) {
+        // Checks if the number of passengers is 0 or null
+        if (passengerAmount == null || passengerAmount == 0) {
+            throw new RuntimeException("Debe seleccionar al menos un pasajero");
+        }
+        // Checks if the number of passengers is above 8
+        if (passengerAmount > 8) {
+            throw new RuntimeException("No se pueden seleccionar más de 8 pasajeros");
+        }
+        // Checks if the minimum of the range of prices is below the maximum
+        if (minimumPrice != null && maximumPrice != null && minimumPrice > maximumPrice){
+            throw new RuntimeException("El precio mínimo no puede ser mayor que el precio máximo");
+        }
+        // Checks if the departure Date and minimum Date are before today
+        if ((departureDate != null && departureDate.isBefore(LocalDate.now())) || (minimumDate != null && minimumDate.isBefore(LocalDate.now()))){
+            throw new RuntimeException("La fecha mínima no puede ser anterior a la fecha actual");
+        }
+        // Checks if the departure Date is before the arrival Date
+        if (departureDate != null && arrivalDate != null && departureDate.isAfter(arrivalDate)){
+            throw new RuntimeException("La fecha de regreso no puede ser anterior a la fecha de ida");
+        }
+        // Checks if the minimum Date is before the maximum Date
+        if (minimumDate != null && maximumDate != null && minimumDate.isAfter(maximumDate)){
+            throw new RuntimeException("La fecha mínima no puede ser anterior a la fecha máxima");
+        }
+        // Checks if the minimum of the time range is below the maximum
+        if (minimumTime != null && maximumTime != null) {
+            LocalTime minTime = LocalTime.parse(minimumTime, timeFormatter);
+            LocalTime maxTime = LocalTime.parse(maximumTime, timeFormatter);
+            if (minTime.isAfter(maxTime) || minTime.equals(maxTime)) {
+                throw new RuntimeException("El horario mínimo no puede ser mayor o igual al horario máximo");
+            }
+        }
     }
 }
